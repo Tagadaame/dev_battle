@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { useRouter } from 'vue-router'
-import { useBattleStore } from '~/stores/useBattleStore'
+import { useBattleStore } from '~/stores/battle'
 
 const router = useRouter()
 const battle = useBattleStore()
@@ -16,7 +16,7 @@ function join() {
     return
   }
 
-  battle.joinGame(name, room)
+  battle.join(name, room)
   router.push('/battle')
 }
 </script>

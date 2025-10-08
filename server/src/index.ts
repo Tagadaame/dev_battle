@@ -45,14 +45,24 @@ io.on('connection', (socket) => {
     }
 
     io.to(room).emit('player-list', state.players)
-
     console.log(`👥 ${player} rejoint la room ${room} (${state.players.length} joueurs)`)
 
-    // Si 2 joueurs ou plus → démarrage automatique
+    // 🟢 Si une partie est déjà en cours, on renvoie l’état actuel au nouveau joueur
+    if (state.started && state.currentCommand) {
+      socket.emit('start-round', {
+        round: state.round,
+        total: 5,
+        command: state.currentCommand,
+      })
+      socket.emit('player-list', state.players)
+    }
+
+    // ⚡ Si c’est la première fois qu’on atteint 2 joueurs, on démarre la partie
     if (state.players.length >= 2 && !state.started) {
       startRound(room)
     }
   })
+
 
   // Quand un joueur tape la commande
   socket.on('submit-command', ({ room, command }) => {
