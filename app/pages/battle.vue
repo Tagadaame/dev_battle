@@ -1,6 +1,6 @@
 <template>
   <div class="p-6 text-green-400 font-mono bg-black min-h-screen">
-    <h1 class="text-xl mb-2">⚔️ Dev Battle – Round {{ battle.currentRound }}/{{ battle.totalRounds }}</h1>
+    <h1 class="text-xl mb-2">⚔️ Dev Battle – Round {{ battle.currentRound }}/{{ battle.totalRounds }} - room {{ battle.roomCode }}</h1>
 
     <div v-if="battle.currentCommand && !battle.gameOver">
       <p class="mb-4">Commande : <strong>{{ battle.currentCommand }}</strong></p>

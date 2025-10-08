@@ -31,28 +31,38 @@ io.on('connection', (socket) => {
   console.log(`🟢 Nouveau joueur connecté : ${socket.id}`)
 
   // Lorsqu’un joueur rejoint une room
-  socket.on('join', ({ player, room }) => {
-    socket.join(room)
+socket.on('join', ({ player, room }) => {
+  socket.join(room)
 
-    if (!rooms.has(room)) {
-      rooms.set(room, { players: [], round: 0, started: false })
-    }
+  if (!rooms.has(room)) {
+    rooms.set(room, { players: [], round: 0, started: false })
+  }
 
-    const state = rooms.get(room)!
-    const existing = state.players.find((p) => p.id === socket.id)
-    if (!existing) {
-      state.players.push({ id: socket.id, name: player, score: 0 })
-    }
+  const state = rooms.get(room)!
+  const existing = state.players.find((p) => p.id === socket.id)
+  if (!existing) {
+    state.players.push({ id: socket.id, name: player, score: 0 })
+  }
 
-    io.to(room).emit('player-list', state.players)
+  io.to(room).emit('player-list', state.players)
+  console.log(`👥 ${player} rejoint la room ${room} (${state.players.length} joueurs)`)
 
-    console.log(`👥 ${player} rejoint la room ${room} (${state.players.length} joueurs)`)
+  // 🟢 Si une partie est déjà en cours, on renvoie l’état actuel au nouveau joueur
+  if (state.started && state.currentCommand) {
+    socket.emit('start-round', {
+      round: state.round,
+      total: 5,
+      command: state.currentCommand,
+    })
+    socket.emit('player-list', state.players)
+  }
 
-    // Si 2 joueurs ou plus → démarrage automatique
-    if (state.players.length >= 2 && !state.started) {
-      startRound(room)
-    }
-  })
+  // ⚡ Si c’est la première fois qu’on atteint 2 joueurs, on démarre la partie
+  if (state.players.length >= 2 && !state.started) {
+    startRound(room)
+  }
+})
+
 
   // Quand un joueur tape la commande
   socket.on('submit-command', ({ room, command }) => {
