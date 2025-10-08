@@ -21,8 +21,7 @@ export const COMMANDS = [
   'printf "Hello, socks!\\n"',
 ]
 
-export function pickRandomCommand(exclude?: string) {
-  const pool = exclude ? COMMANDS.filter(c => c !== exclude) : [...COMMANDS]
-  if (pool.length === 0) return COMMANDS[0]
+export function pickRandomCommand(exclude?: string): string {
+  const pool = exclude ? COMMANDS.filter((c) => c !== exclude) : COMMANDS
   return pool[Math.floor(Math.random() * pool.length)]
 }
